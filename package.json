@@ -30,8 +30,11 @@
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-syntax-highlighter": "^15.5.0",
+    "react-time-picker": "^7.0.0",
     "react-tooltip": "^5.26.3",
-    "stripe": "^13.11.0"
+    "sonner": "^1.5.0",
+    "stripe": "^13.11.0",
+    "twilio": "^5.3.5"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",
