@@ -43,16 +43,9 @@ export async function POST(req) {
         },
         body: JSON.stringify({
           ...hotelReceptionistConfig,
-          task: "Eres un recepcionista de hotel profesional. Ayuda al cliente con sus consultas.",
-          webhook: `${process.env.NEXT_PUBLIC_APP_URL}/api/bland/webhook`,
-          voice_webhook: `${process.env.NEXT_PUBLIC_APP_URL}/api/bland/inbound`,
-          voice_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/bland/twilio/voice`,
-          dynamic_data: [
-            {
-              ...hotelReceptionistConfig.dynamic_data[0],
-              url: `${process.env.NEXT_PUBLIC_APP_URL}/api/bland/business/{{request_data.businessId}}`,
-            },
-          ],
+          webhook: `https://bland-three.vercel.app/api/bland/webhook`,
+          voice_webhook: `https://bland-three.vercel.app/api/bland/inbound`,
+          voice_url: `https://bland-three.vercel.app/api/bland/twilio/voice`,
           record: true,
           reduce_latency: true,
           wait_for_greeting: false,
@@ -61,11 +54,6 @@ export async function POST(req) {
           model: "enhanced",
           amd: false,
           interruption_threshold: 150,
-          transfer_phone_number: process.env.FALLBACK_PHONE_NUMBER,
-          retry: {
-            max_retries: 2,
-            delay_minutes: 5,
-          },
         }),
       }
     );
