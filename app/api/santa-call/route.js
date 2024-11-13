@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 
+// Aumentar el tiempo de timeout para esta ruta
+export const maxDuration = 60; // 60 segundos
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 const BLAND_API_KEY = process.env.BLAND_API_KEY;
 const BLAND_API_URL = "https://api.bland.ai/v1/calls";
 
@@ -24,12 +29,12 @@ export async function POST(req) {
     }
 
     // Formatear el número de teléfono al formato E.164
-    let formattedPhone = data.phone_number.replace(/\D/g, ""); // Eliminar no dígitos
+    let formattedPhone = data.phone_number.replace(/\D/g, "");
     if (!formattedPhone.startsWith("52")) {
-      formattedPhone = "52" + formattedPhone; // Agregar código de país para México
+      formattedPhone = "52" + formattedPhone;
     }
     if (!formattedPhone.startsWith("+")) {
-      formattedPhone = "+" + formattedPhone; // Agregar el signo +
+      formattedPhone = "+" + formattedPhone;
     }
 
     const blandData = {
@@ -64,7 +69,9 @@ export async function POST(req) {
       },
     };
 
-    console.log("Enviando a Bland:", blandData);
+    // Agregar timeout a la petición fetch
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 50000); // 50 segundos
 
     const response = await fetch(BLAND_API_URL, {
       method: "POST",
@@ -73,7 +80,10 @@ export async function POST(req) {
         authorization: BLAND_API_KEY,
       },
       body: JSON.stringify(blandData),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     const result = await response.json();
     console.log("Respuesta de Bland:", result);
@@ -92,6 +102,13 @@ export async function POST(req) {
       stack: error.stack,
       name: error.name,
     });
+
+    if (error.name === "AbortError") {
+      return NextResponse.json(
+        { error: "La llamada tomó demasiado tiempo en completarse" },
+        { status: 504 }
+      );
+    }
 
     return NextResponse.json(
       { error: error.message || "Error al procesar la llamada de Santa" },
