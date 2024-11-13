@@ -1,28 +1,43 @@
 "use client";
-
 import { useRef, useState } from "react";
-
-// <FAQ> component is a lsit of <Item> component
-// Just import the FAQ & add your FAQ content to the const faqList
+import { motion } from "framer-motion";
 
 const faqList = [
   {
-    question: "What do I get exactly?",
-    answer: <div className="space-y-2 leading-relaxed">Loreum Ipseum</div>,
+    question: "¿Cómo funciona la llamada con Santa?",
+    answer: (
+      <div className="space-y-2 leading-relaxed">
+        Santa utilizará su teléfono mágico especial para llamarte directamente
+        desde el Polo Norte. Recibirás la llamada en el día y hora que elijas,
+        ¡así que asegúrate de estar listo! 🎅📞
+      </div>
+    ),
   },
   {
-    question: "Can I get a refund?",
+    question: "¿En qué idioma habla Santa?",
     answer: (
       <p>
-        Yes! You can request a refund within 7 days of your purchase. Reach out
-        by email.
+        ¡Santa es mágico! Puede hablar en el idioma que prefieras. Solo
+        asegúrate de indicar tu idioma preferido al escribir tu carta. ✨
       </p>
     ),
   },
   {
-    question: "I have another question",
+    question: "¿Puedo grabar la llamada con Santa?",
     answer: (
-      <div className="space-y-2 leading-relaxed">Cool, contact us by email</div>
+      <div className="space-y-2 leading-relaxed">
+        ¡Por supuesto! Santa te permite grabar la llamada para que puedas
+        guardar este momento mágico para siempre. 🎄
+      </div>
+    ),
+  },
+  {
+    question: "¿Qué pasa si pierdo mi llamada con Santa?",
+    answer: (
+      <div className="space-y-2 leading-relaxed">
+        ¡No te preocupes! Santa entiende que a veces hay imprevistos. Podrás
+        reprogramar tu llamada dentro de la temporada navideña. 🎁
+      </div>
     ),
   },
 ];
@@ -32,9 +47,14 @@ const Item = ({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <li>
+    <motion.li
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+    >
       <button
-        className="relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10"
+        className="relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-red-200/30"
         onClick={(e) => {
           e.preventDefault();
           setIsOpen(!isOpen);
@@ -42,61 +62,81 @@ const Item = ({ item }) => {
         aria-expanded={isOpen}
       >
         <span
-          className={`flex-1 text-base-content ${isOpen ? "text-primary" : ""}`}
+          className={`flex-1 ${isOpen ? "text-red-600" : "text-base-content"}`}
         >
           {item?.question}
         </span>
-        <svg
-          className={`flex-shrink-0 w-4 h-4 ml-auto fill-current`}
-          viewBox="0 0 16 16"
-          xmlns="http://www.w3.org/2000/svg"
+        <div
+          className={`flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full ${
+            isOpen ? "bg-red-100" : "bg-base-100"
+          }`}
         >
-          <rect
-            y="7"
-            width="16"
-            height="2"
-            rx="1"
-            className={`transform origin-center transition duration-200 ease-out ${
-              isOpen && "rotate-180"
-            }`}
-          />
-          <rect
-            y="7"
-            width="16"
-            height="2"
-            rx="1"
-            className={`transform origin-center rotate-90 transition duration-200 ease-out ${
-              isOpen && "rotate-180 hidden"
-            }`}
-          />
-        </svg>
+          <motion.span
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            className="text-lg"
+          >
+            {isOpen ? "🎄" : "🎅"}
+          </motion.span>
+        </div>
       </button>
 
-      <div
+      <motion.div
         ref={accordion}
-        className={`transition-all duration-300 ease-in-out opacity-80 overflow-hidden`}
-        style={
-          isOpen
-            ? { maxHeight: accordion?.current?.scrollHeight, opacity: 1 }
-            : { maxHeight: 0, opacity: 0 }
+        initial={false}
+        animate={
+          isOpen ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }
         }
+        transition={{ duration: 0.3 }}
+        className="overflow-hidden"
       >
-        <div className="pb-5 leading-relaxed">{item?.answer}</div>
-      </div>
-    </li>
+        <div className="pb-5 leading-relaxed text-base-content/80">
+          {item?.answer}
+        </div>
+      </motion.div>
+    </motion.li>
   );
 };
 
 const FAQ = () => {
   return (
-    <section className="bg-base-200" id="faq">
+    <section className="bg-base-200 relative overflow-hidden" id="faq">
+      {/* Copos de nieve sutiles */}
+      {[...Array(10)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-2 h-2 bg-red-600/10 rounded-full"
+          initial={{ y: -20, x: Math.random() * 100 + "%", opacity: 0 }}
+          animate={{
+            y: "100vh",
+            opacity: [0, 1, 0],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            delay: Math.random() * 4,
+            ease: "linear",
+          }}
+        />
+      ))}
+
       <div className="py-24 px-8 max-w-7xl mx-auto flex flex-col md:flex-row gap-12">
-        <div className="flex flex-col text-left basis-1/2">
-          <p className="inline-block font-semibold text-primary mb-4">FAQ</p>
-          <p className="sm:text-4xl text-3xl font-extrabold text-base-content">
-            Frequently Asked Questions
+        <motion.div
+          className="flex flex-col text-left basis-1/2"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+        >
+          <p className="inline-block font-semibold text-red-600 mb-4">
+            Preguntas Frecuentes
           </p>
-        </div>
+          <h2 className="sm:text-4xl text-3xl font-extrabold text-red-600 mb-4">
+            ¿Tienes dudas sobre la llamada de Santa? 🎅
+          </h2>
+          <p className="text-base-content/70">
+            Aquí encontrarás las respuestas a las preguntas más comunes sobre la
+            experiencia mágica de hablar con Santa ✨
+          </p>
+        </motion.div>
 
         <ul className="basis-1/2">
           {faqList.map((item, i) => (
